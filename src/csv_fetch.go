@@ -30,7 +30,7 @@ func download_csv_locally(csv_url, local_file_name string) int {
 func main() {
 	var url, filename string
 
-	url = "https://people.sc.fsu.edu/~jburkardt/data/csv/addresses.csv"
+	url = "https://people.sc.fsu.edu/~jburkardt/data/csv/cities.csv"
 	filename = "test1.csv"
 
 	data_len := download_csv_locally(url, filename)
