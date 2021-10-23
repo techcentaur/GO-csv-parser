@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"log"
+	"fmt"
 	"net/http"
 	"os"
 
@@ -17,22 +17,23 @@ const (
 )
 
 func main() {
-	filename := os.Args[1]
+	uploadFilename := os.Args[1]
 
 	session, err := session.NewSession(&aws.Config{Region: aws.String(AWS_S3_REGION)})
 	if err != nil {
-		panic(err)
+		fmt.Println("error in session creation!", err)
 	}
 
-	// Upload Files
-	err = uploadFile(session, filename)
+	err = uploadFile(session, uploadFilename)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println(err)
+	} else {
+		fmt.Printf("[*] uplading file: %v -> bucket: %v // SUCCESS!\n", uploadFilename, AWS_S3_BUCKET)
 	}
 }
 
-func uploadFile(session *session.Session, filename string) error {
-	file, err := os.Open(filename)
+func uploadFile(session *session.Session, uploadFilename string) error {
+	file, err := os.Open(uploadFilename)
 	if err != nil {
 		return err
 	}
@@ -46,7 +47,7 @@ func uploadFile(session *session.Session, filename string) error {
 
 	_, err = s3.New(session).PutObject(&s3.PutObjectInput{
 		Bucket:               aws.String(AWS_S3_BUCKET),
-		Key:                  aws.String(filename),
+		Key:                  aws.String(uploadFilename),
 		ACL:                  aws.String("private"),
 		Body:                 bytes.NewReader(fileBuffer),
 		ContentLength:        aws.Int64(fileSize),
